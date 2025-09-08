@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laura June – Blog Cover</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f5d6eb, #c7ede6);
+      color: #333;
+      text-align: center;
+    }
+    header {
+      padding: 2rem;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      color: #4b3c7d;
+    }
+    header p {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+    .blog-posts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .post {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s;
+      position: relative;
+    }
+    .post:hover {
+      transform: translateY(-5px);
+    }
+    .post img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+    .post h3 {
+      margin: 1rem;
+      font-size: 1.2rem;
+      color: #4b3c7d;
+    }
+    .post p {
+      margin: 0 1rem 1rem;
+      font-size: 0.95rem;
+      color: #555;
+    }
+    .post button {
+      margin: 0 0 1rem;
+      background: linear-gradient(135deg, #6a5acd, #a084e8);
+      color: white;
+      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .post button:hover {
+      background: linear-gradient(135deg, #4b3c7d, #7f62d1);
+    }
+    .auth-container {
+      background: rgba(255,255,255,0.97);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.09);
+      padding: 2rem 2.5rem;
+      max-width: 350px;
+      width: 100%;
+      text-align: center;
+      margin: 2rem auto;
+    }
+    h2 {
+      color: #4b3c7d;
+      margin-bottom: 1.25rem;
+    }
+    .form-group {
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+    }
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .auth-actions {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    button {
+      background: linear-gradient(135deg, #6a5acd, #a084e8);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.6rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #4b3c7d, #7f62d1);
+    }
+    .switch-link {
+      background: none;
+      border: none;
+      color: #4b3c7d;
+      font-size: 1rem;
+      cursor: pointer;
+      text-decoration: underline;
+      margin-top: 0.5rem;
+      transition: color 0.2s;
+    }
+    .switch-link:hover {
+      color: #a084e8;
+    }
+    .error {
+      color: #d94f4f;
+      margin-bottom: 0.9rem;
+      font-size: 0.95rem;
+    }
+    .success {
+      color: #4bb543;
+      margin-bottom: 0.9rem;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>☕ Laura June’s World ✨</h1>
+    <p>A curated diary of rituals, moods & little luxuries.</p>
+     <nav>
+    <a href="about.html" class="link-button">About</a>
+    < <a href="profile.html" class="link-button">Profile</a> -->
+  </nav>
+  </header>
+
+  <!-- AUTH FORM BEGIN -->
+  <div class="auth-container">
+    <h2 id="form-title">Login</h2>
+    <div id="auth-error" class="error" style="display:none;"></div>
+    <div id="auth-success" class="success" style="display:none;"></div>
+    <form id="login-form" style="">
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" required>
+      </div>
+      <div class="auth-actions">
+        <button type="submit">Login</button>
+        <button type="button" class="switch-link" id="show-signup">Don’t have an account? Sign Up</button>
+        <button type="button" class="switch-link" id="show-forgot">Forgot Password?</button>
+      </div>
+    </form>
+    <form id="signup-form" style="display:none;">
+      <div class="form-group">
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" required>
+      </div>
+      <div class="form-group">
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" required>
+      </div>
+      <div class="auth-actions">
+        <button type="submit">Sign Up</button>
+        <button type="button" class="switch-link" id="show-login">Already have an account? Login</button>
+      </div>
+    </form>
+    <form id="forgot-form" style="display:none;">
+      <div class="form-group">
+        <label for="forgot-email">Email</label>
+        <input type="email" id="forgot-email" required>
+      </div>
+      <div class="auth-actions">
+        <button type="submit">Send Reset Link</button>
+        <button type="button" class="switch-link" id="back-login">Back to Login</button>
+      </div>
+    </form>
+  </div>
+  <!-- AUTH FORM END -->
+
+  <section class="blog-posts">
+    <div class="post">
+      <img src="https://i.imgur.com/grSV5fv.jpeg" alt="Starbucks moment">
+      <h3>Laura June’s Starbucks Ritual</h3>
+      <p>A mocha frappuccino diary entry about slowing down and savoring little luxuries.</p>
+      <button onclick="window.location.href='laura-june-starbucks.html'">Read More</button>
+    </div>
+
+    <div class="post">
+      <img src="https://i.imgur.com/2l8tTpP.jpeg" alt="Subway sandwich editorial 1">
+      <h3>Laura June’s Subway Story</h3>
+      <p>A long editorial about her ritual of choosing fresh veggies, layered flavors, and finding comfort in simplicity at Subway.</p>
+      <button>Read More</button>
+    </div>
+
+    <div class="post">
+      <img src="https://i.imgur.com/aHusFyK.jpeg" alt="Subway sandwich editorial 2">
+      <h3>Colors of Comfort</h3>
+      <p>A cozy cardigan, a fresh sandwich, and the quiet of a lunch break turned into an aesthetic ritual.</p>
+      <button>Coming Soon</button>
+    </div>
+
+    <div class="post">
+      <img src="https://i.imgur.com/3L2pI1c.png" alt="Mood visuals">
+      <h3>Visual Diary</h3>
+      <p>A blend of textures, light, and little luxuries — curated in visual snippets.</p>
+      <button>Coming Soon</button>
+    </div>
+  </section>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyCnZv0aSJzDBfKUou2tK1_nHT_NBz8HIlI",
+      authDomain: "laurajune-2af62.firebaseapp.com",
+      projectId: "laurajune-2af62",
+      storageBucket: "laurajune-2af62.firebasestorage.app",
+      messagingSenderId: "901500421272",
+      appId: "1:901500421272:web:9a798ba04d1d07498b3ced",
+      measurementId: "G-QF9G7547D1"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const auth = getAuth(app);
+
+    // Auth form logic
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const forgotForm = document.getElementById('forgot-form');
+    const showSignup = document.getElementById('show-signup');
+    const showLogin = document.getElementById('show-login');
+    const showForgot = document.getElementById('show-forgot');
+    const backLogin = document.getElementById('back-login');
+    const formTitle = document.getElementById('form-title');
+    const authError = document.getElementById('auth-error');
+    const authSuccess = document.getElementById('auth-success');
+
+    function showForm(form) {
+      loginForm.style.display = form === 'login' ? '' : 'none';
+      signupForm.style.display = form === 'signup' ? '' : 'none';
+      forgotForm.style.display = form === 'forgot' ? '' : 'none';
+      formTitle.textContent = form === 'login' ? 'Login' : form === 'signup' ? 'Sign Up' : 'Forgot Password';
+      authError.style.display = 'none';
+      authSuccess.style.display = 'none';
+    }
+
+    showSignup.onclick = () => showForm('signup');
+    showLogin.onclick = () => showForm('login');
+    showForgot.onclick = () => showForm('forgot');
+    backLogin.onclick = () => showForm('login');
+
+    // Login
+    loginForm.onsubmit = async (e) => {
+      e.preventDefault();
+      authError.style.display = 'none';
+      authSuccess.style.display = 'none';
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        authSuccess.textContent = "Login successful!";
+        authSuccess.style.display = 'block';
+        setTimeout(() => window.location.href = "/", 800);
+      } catch (error) {
+        authError.textContent = error.message;
+        authError.style.display = 'block';
+      }
+    };
+    // Sign Up
+    signupForm.onsubmit = async (e) => {
+      e.preventDefault();
+      authError.style.display = 'none';
+      authSuccess.style.display = 'none';
+      const email = document.getElementById('signup-email').value;
+      const password = document.getElementById('signup-password').value;
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        authSuccess.textContent = "Account created! Redirecting…";
+        authSuccess.style.display = 'block';
+        setTimeout(() => window.location.href = "/", 800);
+      } catch (error) {
+        authError.textContent = error.message;
+        authError.style.display = 'block';
+      }
+    };
+    // Forgot Password
+    forgotForm.onsubmit = async (e) => {
+      e.preventDefault();
+      authError.style.display = 'none';
+      authSuccess.style.display = 'none';
+      const email = document.getElementById('forgot-email').value;
+      try {
+        await sendPasswordResetEmail(auth, email);
+        authSuccess.textContent = "Password reset email sent!";
+        authSuccess.style.display = 'block';
+      } catch (error) {
+        authError.textContent = error.message;
+        authError.style.display = 'block';
+      }
+    };
+
+    // Default to login view
+    showForm('login');
+    <nav>
+    <button id="profile-btn">Profile</button>
+  </nav>
+
+  <script>
+    // Simulate user sign-in status
+    const userSignedIn = true; // Change to false to hide the button
+
+    if (userSignedIn) {
+      document.getElementById('profile-btn').style.display = 'inline-block';
+    }
+   
+  </script>
+</body>
+</html>
