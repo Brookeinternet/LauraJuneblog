@@ -202,6 +202,14 @@
     </div>
   </section>
   <script type="module">
+    const createCheckoutSession = firebase.functions().httpsCallable("createCheckoutSession");
+
+createCheckoutSession({ priceId: "price_1S58uX5rllEuTtEWiHPHRkIB was " }).then((res) => {
+  const sessionId = res.data.sessionId;
+  const stripe = Stripe("pk_live_51S58qc5rllEuTtEWtMETOun3P5B4k5LHkltI1WWhuBOaKhpxSz0LZDWgH3oZS9HX8GynZYvpPt28aNbZRbUVQ0pD00UQ380phz"); // Your public key
+  stripe.redirectToCheckout({ sessionId });
+});
+
    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
 import {
   getAuth,
