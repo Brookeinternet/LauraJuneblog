@@ -1,6 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const stripe = require("stripe")("sk_test_..."); // Replace with your Stripe secret key
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 app.use(cors());
@@ -12,13 +13,13 @@ app.post("/create-checkout-session", async (req, res) => {
       payment_method_types: ["card"],
       line_items: [
         {
-          price: req.body.priceId, // Stripe Price ID from frontend
+          price: req.body.priceId,
           quantity: 1
         }
       ],
       mode: "payment",
-      success_url: "https://brookeinternet.github.io/LauraJuneblog/?/success",
-      cancel_url: "https://brookeinternet.github.io/LauraJuneblog/?/cancel"
+      success_url: "https://brookeinternet.github.io/LauraJuneblog/success.html",
+      cancel_url: "https://brookeinternet.github.io/LauraJuneblog/cancel.html"
     });
 
     res.json({ sessionId: session.id });
