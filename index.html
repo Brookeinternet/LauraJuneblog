@@ -214,61 +214,209 @@ document.getElementById("buy-button").onclick = async () => {
 const result = await createCheckoutSession({ priceId: " "price_1S58uX5rllEuTtEWiHPHRkIB" });
   await stripe.redirectToCheckout({ sessionId: result.data.sessionId });
 };
-   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail
-} from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+   <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc,
+    updateDoc
+  } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCnZv0aSJzDBfKUou2tK1_nHT_NBz8HIlI",
-  authDomain: "laurajune-2af62.firebaseapp.com",
-  projectId: "laurajune-2af62",
-  storageBucket: "laurajune-2af62.appspot.com",
-  messagingSenderId: "901500421272",
-  appId: "1:901500421272:web:9a798ba04d1d07498b3ced",
-  measurementId: "G-QF9G7547D1"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCnZv0aSJzDBfKUou2tK1_nHT_NBz8HIlI",
+    authDomain: "laurajune-2af62.firebaseapp.com",
+    projectId: "laurajune-2af62",
+    storageBucket: "laurajune-2af62.appspot.com",
+    messagingSenderId: "901500421272",
+    appId: "1:901500421272:web:9a798ba04d1d07498b3ced",
+    measurementId: "G-QF9G7547D1"
+  };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
 
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const signupBtn = document.getElementById("signup-btn");
-const loginBtn = document.getElementById("login-btn");
-const resetBtn = document.getElementById("reset-btn");
-const message = document.getElementById("auth-message");
+  // DOM elements
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const signupBtn = document.getElementById("signup-btn");
+  const loginBtn = document.getElementById("login-btn");
+  const resetBtn = document.getElementById("reset-btn");
+  const message = document.getElementById("auth-message");
 
-signupBtn.onclick = async (e) => {
-  e.preventDefault();
-  try {
-    const userCred = await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-    message.textContent = `Signed up as ${userCred.user.email}`;
-  } catch (err) {
-    message.textContent = err.message;
+  const avatarImg = document.getElementById("user-avatar");
+  const avatarInput = document.getElementById("avatar-input");
+  const bioDiv = document.getElementById("profile-bio");
+  const editBioBtn = document.getElementById("edit-bio-btn");
+  const favoritesList = document.getElementById("favorites-list");
+  const addFavoriteForm = document.getElementById("add-favorite-form");
+  const favoriteInput = document.getElementById("favorite-input");
+  const likesList = document.getElementById("likes-list");
+
+  let currentUser = null;
+  let userData = {
+    photoURL: "",
+    bio: "",
+    favorites: [],
+    likes: []
+  };
+
+  // Auth actions
+  signupBtn.onclick = async (e) => {
+    e.preventDefault();
+    try {
+      const userCred = await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+      message.textContent = `Signed up as ${userCred.user.email}`;
+    } catch (err) {
+      message.textContent = err.message;
+    }
+  };
+
+  loginBtn.onclick = async () => {
+    try {
+      const userCred = await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+      message.textContent = `Logged in as ${userCred.user.email}`;
+    } catch (err) {
+      message.textContent = err.message;
+    }
+  };
+
+  resetBtn.onclick = async () => {
+    try {
+      await sendPasswordResetEmail(auth, emailInput.value);
+      message.textContent = "Password reset email sent!";
+    } catch (err) {
+      message.textContent = err.message;
+    }
+  };
+
+  // Load profile on auth state change
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
+
+      if (snap.exists()) {
+        userData = snap.data();
+      } else {
+        userData = {
+          photoURL: user.photoURL || "https://i.imgur.com/grSV5fv.jpeg",
+          bio: "Coffee lover, ritual enthusiast, and blogger.",
+          favorites: [],
+          likes: []
+        };
+        await setDoc(userRef, userData);
+      }
+
+      renderProfile();
+    }
+  });
+
+  // Profile rendering
+  function renderProfile() {
+    avatarImg.src = userData.photoURL;
+    bioDiv.textContent = userData.bio;
+    renderFavorites();
+    renderLikes();
   }
-};
 
-loginBtn.onclick = async () => {
-  try {
-    const userCred = await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
-    message.textContent = `Logged in as ${userCred.user.email}`;
-  } catch (err) {
-    message.textContent = err.message;
-  }
-};
+  avatarInput.addEventListener("change", async function (e) {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = async function (event) {
+        userData.photoURL = event.target.result;
+        avatarImg.src = userData.photoURL;
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          photoURL: userData.photoURL
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 
-resetBtn.onclick = async () => {
-  try {
-    await sendPasswordResetEmail(auth, emailInput.value);
-    message.textContent = "Password reset email sent!";
-  } catch (err) {
-    message.textContent = err.message;
+  editBioBtn.onclick = async function () {
+    const newBio = prompt("Edit your bio:", userData.bio);
+    if (newBio && newBio.trim() !== "") {
+      userData.bio = newBio.trim();
+      bioDiv.textContent = userData.bio;
+      await updateDoc(doc(db, "users", currentUser.uid), {
+        bio: userData.bio
+      });
+    }
+  };
+
+  addFavoriteForm.onsubmit = async function (e) {
+    e.preventDefault();
+    const fav = favoriteInput.value.trim();
+    if (fav && !userData.favorites.includes(fav)) {
+      userData.favorites.push(fav);
+      favoriteInput.value = "";
+      await updateDoc(doc(db, "users", currentUser.uid), {
+        favorites: userData.favorites
+      });
+      renderFavorites();
+    }
+  };
+
+  function renderFavorites() {
+    favoritesList.innerHTML = "";
+    userData.favorites.forEach((fav, idx) => {
+      const li = document.createElement("li");
+      li.textContent = fav;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "Remove";
+      removeBtn.className = "remove-btn";
+      removeBtn.onclick = async () => {
+        userData.favorites.splice(idx, 1);
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          favorites: userData.favorites
+        });
+        renderFavorites();
+      };
+      li.appendChild(removeBtn);
+
+      const likeBtn = document.createElement("button");
+      likeBtn.textContent = userData.likes.includes(fav) ? "Unlike" : "Like";
+      likeBtn.className = "like-btn";
+      likeBtn.onclick = async () => {
+        if (userData.likes.includes(fav)) {
+          userData.likes = userData.likes.filter(l => l !== fav);
+        } else {
+          userData.likes.push(fav);
+        }
+        await updateDoc(doc(db, "users", currentUser.uid), {
+          likes: userData.likes
+        });
+        renderLikes();
+        renderFavorites();
+      };
+      li.appendChild(likeBtn);
+      favoritesList.appendChild(li);
+    });
   }
-};
+
+  function renderLikes() {
+    likesList.innerHTML = "";
+    userData.likes.forEach((like) => {
+      const li = document.createElement("li");
+      li.textContent = like;
+      likesList.appendChild(li);
+    });
+  }
+</script>
+
 
   </script>
 </body>
