@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Laura June | Autumn Whispers</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #fffaf4;
+      color: #4b3b2f;
+      line-height: 1.7;
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+      position: relative;
+      overflow-x: hidden;
+    }
+    h1, h2 {
+      font-family: 'Playfair Display', serif;
+      color: #3c2f2f;
+    }
+    .hero {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    .leaf {
+      position: absolute;
+      top: -50px;
+      width: 30px;
+      height: 30px;
+      background-image: url('https://i.imgur.com/XuaTpQY.png'); /* Replace with your leaf icon */
+      background-size: cover;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    .locked, .article {
+      display: none;
+    }
+    .signature {
+      font-family: 'Brush Script MT', cursive;
+      font-size: 1.4rem;
+      margin-top: 3rem;
+      color: #a67c52;
+    }
+  </style>
+</head>
+<body>
+  <img src="https://i.imgur.com/yF0IUkz.jpeg" alt="Laura June sipping autumn magic" class="hero" />
+
+  <div class="locked">
+    <h1>🍂 This article unlocks October 8th</h1>
+    <p>Only Pro subscribers will be able to read Laura’s cozy autumn letter. Sign in to check your access or upgrade to unlock seasonal magic.</p>
+  </div>
+
+  <div class="article">
+    <h1>Autumn Whispers: A Letter from Laura</h1>
+    <p>Dear kindred spirits,</p>
+    <p>As the leaves begin their golden descent and the air carries that first crisp whisper of fall...</p>
+
+    <h2>The Ritual of the First Sip</h2>
+    <p>There’s something sacred about the first sip of a seasonal drink...</p>
+
+    <h2>For Those Who Stay</h2>
+    <p>This space is for you—the ones who linger, who read to the end...</p>
+
+
+    </ul>
+
+    <p class="signature">With warmth,<br />Laura</p>
+  </div>
+
+  <!-- Falling leaves animation -->
+  <script>
+    const leafCount = 12;
+    for (let i = 0; i < leafCount; i++) {
+      const leaf = document.createElement('div');
+      leaf.className = 'leaf';
+      leaf.style.left = `${Math.random() * 100}vw`;
+      leaf.style.animationDuration = `${6 + Math.random() * 6}s`;
+      document.body.appendChild(leaf);
+    }
+  </script>
+
+  <!-- Firebase Access Control -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCnZv0aSJzDBfKUou2tK1_nHT_NBz8HIlI",
+      authDomain: "laurajune-2af62.firebaseapp.com",
+      projectId: "laurajune-2af62",
+      storageBucket: "laurajune-2af62.appspot.com",
+      messagingSenderId: "901500421272",
+      appId: "1:901500421272:web:9a798ba04d1d07498b3ced",
+      measurementId: "G-QF9G7547D1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const releaseDate = new Date("2025-10-08T00:00:00");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const data = userSnap.data();
+          const isPro = data.subscription === "pro";
+          const now = new Date();
+
+          if (isPro && now >= releaseDate) {
+            document.querySelector(".article").style.display = "block";
+          } else {
+            document.querySelector(".locked").style.display = "block";
+          }
+        } else {
+          document.querySelector(".locked").style.display = "block";
+        }
+      } else {
+        document.querySelector(".locked").style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
